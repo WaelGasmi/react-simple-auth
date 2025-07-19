@@ -34,6 +34,19 @@ export const authApi = () => {
     }
   };
 
+  const signupApi = async (username, password) => {
+    try {
+      const res = axios.post("http://localhost:5000/auth/signup", {
+        username,
+        password,
+      });
+
+      return (await res).data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
   const checkMe = async () => {
     try {
       const res = await axios.get("http://localhost:5000/auth/me", {
@@ -45,5 +58,5 @@ export const authApi = () => {
       throw new Error(error.message);
     }
   };
-  return { loginApi, logoutApi, checkMe };
+  return { loginApi, signupApi, logoutApi, checkMe };
 };

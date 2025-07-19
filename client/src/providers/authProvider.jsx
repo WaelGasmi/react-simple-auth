@@ -1,15 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AuthContext } from "../contexts/authContext";
 import { authApi } from "../api/authApi";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const { loginApi, logoutApi, checkMe } = authApi();
+  const [loading, setLoading] = useState(true);
+  const { loginApi, signupApi, logoutApi, checkMe } = useMemo(
+    () => authApi(),
+    []
+  );
 
   useEffect(() => {
     const fetchUser = async () => {
-      const data = await checkMe();
-      if (data && data.user) setUser(data.user);
+      try {
+        const data = await checkMe();
+        if (data?.user?.username) {
+          setUser(data.user.username);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchUser();
@@ -17,10 +31,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async ({ username, password }) => {
     const data = await loginApi(username, password);
-    if (data && data.user) {
-      setUser(data.user);
+    if (data && data.username) {
+      setUser(data.username);
       return true;
     }
+    return false;
+  };
+
+  const signup = async ({ username, password }) => {
+    const data = await signupApi(username, password);
+    if (data) return true;
     return false;
   };
 
@@ -30,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

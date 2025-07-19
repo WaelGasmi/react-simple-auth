@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ username: "wael", password: "wael123" });
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -42,6 +42,7 @@ export default function LoginPage() {
         />
       </div>
       <button type="submit">Login</button>
+      <Link to={"/signup"}>Go to Signup</Link>
     </form>
   );
 }
